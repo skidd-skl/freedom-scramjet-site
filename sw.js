@@ -1,4 +1,4 @@
-importScripts("https://jsdelivr.net");
+importScripts("https://unpkg.com");
 
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker();
