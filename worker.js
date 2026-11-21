@@ -1,1 +1,2 @@
-importScripts("https://jsdelivr.net");
+importScripts("https://unpkg.com");
+
