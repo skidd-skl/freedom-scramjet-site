@@ -19,26 +19,33 @@
     <input id="url-input" type="url" placeholder="https://example.com" />
     <button id="go-btn">Go</button>
   </div>
-  <div id="status">Loading engine...</div>
+  <div id="status">Starting...</div>
   <iframe id="proxy-frame"></iframe>
 
   <script type="module">
-    const status = document.getElementById("status");
-    try {
-      import { BareMuxConnection } from "https://jsdelivr.net";
+    import { BareMuxConnection } from "https://jsdelivr.net";
 
+    const status = document.getElementById("status");
+    const basePath = location.pathname.replace(/\/[^/]*$/, "/");
+
+    try {
+      status.textContent = "1/3 Loading Scramjet...";
       const { ScramjetController } = $scramjetLoadController();
       const scramjet = new ScramjetController({
+        prefix: basePath + "scramjet/",
         files: {
           wasm: "https://jsdelivr.net",
           all: "https://jsdelivr.net",
           sync: "https://jsdelivr.net",
         },
       });
-      scramjet.init();
+      await scramjet.init();
 
-      await navigator.serviceWorker.register("./sw.js");
+      status.textContent = "2/3 Registering Service Worker...";
+      await navigator.serviceWorker.register("./sw.js", { scope: basePath });
+      await navigator.serviceWorker.ready;
 
+      status.textContent = "3/3 Connecting to Wisp...";
       const connection = new BareMuxConnection("./worker.js");
       await connection.setTransport("https://jsdelivr.net", [
         { wisp: "wss://anura.pro/" }
@@ -66,4 +73,3 @@
   </script>
 </body>
 </html>
-
